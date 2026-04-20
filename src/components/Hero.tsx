@@ -150,7 +150,8 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="absolute inset-0 z-20 pointer-events-none">
+      <div className="absolute inset-x-0 bottom-0 h-1/3 z-20 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10" />
         <img
           src="https://cdn.poehali.dev/projects/faae0d53-f144-42c6-9f08-78d5980629ff/files/9700fb88-9ad3-491e-982a-5cd8256fa439.jpg"
           alt="Деревянная ресторанная столешница"
