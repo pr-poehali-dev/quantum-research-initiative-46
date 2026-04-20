@@ -9,7 +9,7 @@ export function Footer() {
               <img src="/images/hously-logo.svg" alt="Пространство" width={120} height={32} className="w-auto h-6" />
             </a>
             <p className="text-muted-foreground leading-relaxed max-w-sm">
-              Мебель ручной работы из натурального дерева. Изготавливаем под ваши размеры и стиль с гарантией качества.
+              Производство мебели для HoReCa: рестораны, отели, бары, офисы. Проект, производство и монтаж под ключ.
             </p>
           </div>
 
