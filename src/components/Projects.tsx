@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { ArrowUpRight } from "lucide-react"
+import Icon from "@/components/ui/icon"
 
 const projects = [
   {
@@ -61,7 +62,26 @@ const projects = [
 export function Projects() {
   const [hoveredId, setHoveredId] = useState<number | null>(null)
   const [revealedImages, setRevealedImages] = useState<Set<number>>(new Set())
+  const [activeProjectId, setActiveProjectId] = useState<number | null>(null)
+  const [activeImageIndex, setActiveImageIndex] = useState(0)
   const imageRefs = useRef<(HTMLDivElement | null)[]>([])
+
+  const activeProject = projects.find((p) => p.id === activeProjectId) ?? null
+
+  const closeGallery = useCallback(() => {
+    setActiveProjectId(null)
+    setActiveImageIndex(0)
+  }, [])
+
+  const showPrev = useCallback(() => {
+    if (!activeProject) return
+    setActiveImageIndex((i) => (i - 1 + activeProject.images.length) % activeProject.images.length)
+  }, [activeProject])
+
+  const showNext = useCallback(() => {
+    if (!activeProject) return
+    setActiveImageIndex((i) => (i + 1) % activeProject.images.length)
+  }, [activeProject])
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -84,6 +104,21 @@ export function Projects() {
 
     return () => observer.disconnect()
   }, [])
+
+  useEffect(() => {
+    if (!activeProject) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeGallery()
+      if (e.key === "ArrowLeft") showPrev()
+      if (e.key === "ArrowRight") showNext()
+    }
+    window.addEventListener("keydown", onKey)
+    document.body.style.overflow = "hidden"
+    return () => {
+      window.removeEventListener("keydown", onKey)
+      document.body.style.overflow = ""
+    }
+  }, [activeProject, closeGallery, showPrev, showNext])
 
   return (
     <section id="projects" className="py-32 md:py-29 bg-secondary/50">
@@ -109,6 +144,10 @@ export function Projects() {
               className="group cursor-pointer"
               onMouseEnter={() => setHoveredId(project.id)}
               onMouseLeave={() => setHoveredId(null)}
+              onClick={() => {
+                setActiveProjectId(project.id)
+                setActiveImageIndex(0)
+              }}
             >
               <div ref={(el) => (imageRefs.current[index] = el)} className="relative overflow-hidden aspect-[4/3] mb-6">
                 <img
@@ -118,6 +157,12 @@ export function Projects() {
                     hoveredId === project.id ? "scale-105" : "scale-100"
                   }`}
                 />
+                {project.images.length > 1 && (
+                  <div className="absolute top-4 right-4 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-sm text-white text-xs">
+                    <Icon name="Images" size={14} />
+                    {project.images.length}
+                  </div>
+                )}
                 <div
                   className="absolute inset-0 bg-primary origin-top"
                   style={{
@@ -140,6 +185,86 @@ export function Projects() {
           ))}
         </div>
       </div>
+
+      {activeProject && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/95 flex flex-col"
+          onClick={closeGallery}
+        >
+          <div className="flex items-center justify-between px-6 md:px-12 py-5 text-white">
+            <div>
+              <p className="text-xs tracking-[0.3em] uppercase text-white/60 mb-1">{activeProject.category}</p>
+              <h3 className="text-lg md:text-xl font-medium">{activeProject.title}</h3>
+            </div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                closeGallery()
+              }}
+              className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors"
+              aria-label="Закрыть"
+            >
+              <Icon name="X" size={22} />
+            </button>
+          </div>
+
+          <div
+            className="flex-1 relative flex items-center justify-center px-4 md:px-20"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={activeProject.images[activeImageIndex]}
+              alt={`${activeProject.title} — фото ${activeImageIndex + 1}`}
+              className="max-h-full max-w-full object-contain"
+            />
+
+            {activeProject.images.length > 1 && (
+              <>
+                <button
+                  onClick={showPrev}
+                  className="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                  aria-label="Предыдущее фото"
+                >
+                  <Icon name="ChevronLeft" size={24} />
+                </button>
+                <button
+                  onClick={showNext}
+                  className="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                  aria-label="Следующее фото"
+                >
+                  <Icon name="ChevronRight" size={24} />
+                </button>
+              </>
+            )}
+          </div>
+
+          {activeProject.images.length > 1 && (
+            <div
+              className="px-6 md:px-12 py-5"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-center gap-2 mb-3 text-white/70 text-sm">
+                {activeImageIndex + 1} / {activeProject.images.length}
+              </div>
+              <div className="flex gap-2 md:gap-3 overflow-x-auto justify-start md:justify-center pb-2">
+                {activeProject.images.map((src, i) => (
+                  <button
+                    key={src}
+                    onClick={() => setActiveImageIndex(i)}
+                    className={`relative shrink-0 w-20 h-16 md:w-24 md:h-20 overflow-hidden rounded-md transition-all ${
+                      i === activeImageIndex
+                        ? "ring-2 ring-white opacity-100"
+                        : "opacity-50 hover:opacity-100"
+                    }`}
+                  >
+                    <img src={src} alt={`Миниатюра ${i + 1}`} className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </section>
   )
 }
