@@ -149,12 +149,12 @@ export function Projects() {
                 setActiveImageIndex(0)
               }}
             >
-              <div ref={(el) => (imageRefs.current[index] = el)} className="relative overflow-hidden aspect-[4/3] mb-6">
+              <div ref={(el) => (imageRefs.current[index] = el)} className="relative overflow-hidden mb-6 bg-secondary">
                 <img
                   src={project.images[0] || "/placeholder.svg"}
                   alt={project.title}
-                  className={`w-full h-full object-cover transition-transform duration-700 ${
-                    hoveredId === project.id ? "scale-105" : "scale-100"
+                  className={`w-full h-auto object-contain transition-transform duration-700 ${
+                    hoveredId === project.id ? "scale-[1.02]" : "scale-100"
                   }`}
                 />
                 {project.images.length > 1 && (
