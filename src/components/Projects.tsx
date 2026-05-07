@@ -4,35 +4,57 @@ import { ArrowUpRight } from "lucide-react"
 const projects = [
   {
     id: 1,
+    title: "Автосалон GATE",
+    category: "Автосалон",
+    location: "Москва, ресепшн и торговое оборудование",
+    year: "2025",
+    images: [
+      "https://cdn.poehali.dev/projects/faae0d53-f144-42c6-9f08-78d5980629ff/bucket/0dca56c9-bb78-4d5c-b101-dfdadbdebf50.png",
+      "https://cdn.poehali.dev/projects/faae0d53-f144-42c6-9f08-78d5980629ff/bucket/e6262aa9-421d-42a7-bce8-7533b4a7eec6.jpg",
+      "https://cdn.poehali.dev/projects/faae0d53-f144-42c6-9f08-78d5980629ff/bucket/c2e22964-8afd-4435-8d6d-1ca737a021e5.jpg",
+      "https://cdn.poehali.dev/projects/faae0d53-f144-42c6-9f08-78d5980629ff/bucket/13009a38-52fb-4164-87e5-a2f65cdae4e3.jpg",
+      "https://cdn.poehali.dev/projects/faae0d53-f144-42c6-9f08-78d5980629ff/bucket/f8a3fce4-f47a-4bcf-813b-2583d8c73244.jpg",
+    ],
+  },
+  {
+    id: 2,
     title: "Ресторан «Brasserie Nord»",
     category: "Ресторан",
     location: "Москва, 120 посадочных мест",
     year: "2024",
-    image: "https://cdn.poehali.dev/projects/faae0d53-f144-42c6-9f08-78d5980629ff/files/e6833f15-35d0-4ac0-8228-726661a52928.jpg",
+    images: [
+      "https://cdn.poehali.dev/projects/faae0d53-f144-42c6-9f08-78d5980629ff/files/e6833f15-35d0-4ac0-8228-726661a52928.jpg",
+    ],
   },
   {
-    id: 2,
+    id: 3,
     title: "Отель «The White»",
     category: "Бутик-отель",
     location: "Санкт-Петербург, 45 номеров",
     year: "2024",
-    image: "https://cdn.poehali.dev/projects/faae0d53-f144-42c6-9f08-78d5980629ff/files/a61a6fd8-b10d-47c6-b5b0-7eb09b7a1f7c.jpg",
+    images: [
+      "https://cdn.poehali.dev/projects/faae0d53-f144-42c6-9f08-78d5980629ff/files/a61a6fd8-b10d-47c6-b5b0-7eb09b7a1f7c.jpg",
+    ],
   },
   {
-    id: 3,
+    id: 4,
     title: "Бар «Oak & Rye»",
     category: "Бар / Лаунж",
     location: "Москва, концептуальный бар",
     year: "2023",
-    image: "https://cdn.poehali.dev/projects/faae0d53-f144-42c6-9f08-78d5980629ff/files/5cc21788-fe66-4bca-bcf6-6917271477de.jpg",
+    images: [
+      "https://cdn.poehali.dev/projects/faae0d53-f144-42c6-9f08-78d5980629ff/files/5cc21788-fe66-4bca-bcf6-6917271477de.jpg",
+    ],
   },
   {
-    id: 4,
+    id: 5,
     title: "Офис «Meridian Group»",
     category: "Корпоративный объект",
     location: "Москва, 500 м² переговорные и лобби",
     year: "2023",
-    image: "https://cdn.poehali.dev/projects/faae0d53-f144-42c6-9f08-78d5980629ff/files/f8b4d3c0-4929-40b1-912d-8259e431f79e.jpg",
+    images: [
+      "https://cdn.poehali.dev/projects/faae0d53-f144-42c6-9f08-78d5980629ff/files/f8b4d3c0-4929-40b1-912d-8259e431f79e.jpg",
+    ],
   },
 ]
 
@@ -90,7 +112,7 @@ export function Projects() {
             >
               <div ref={(el) => (imageRefs.current[index] = el)} className="relative overflow-hidden aspect-[4/3] mb-6">
                 <img
-                  src={project.image || "/placeholder.svg"}
+                  src={project.images[0] || "/placeholder.svg"}
                   alt={project.title}
                   className={`w-full h-full object-cover transition-transform duration-700 ${
                     hoveredId === project.id ? "scale-105" : "scale-100"
