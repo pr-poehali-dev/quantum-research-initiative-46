@@ -62,9 +62,19 @@ const projects = [
 export function Projects() {
   const [hoveredId, setHoveredId] = useState<number | null>(null)
   const [revealedImages, setRevealedImages] = useState<Set<number>>(new Set())
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set())
   const [activeProjectId, setActiveProjectId] = useState<number | null>(null)
   const [activeImageIndex, setActiveImageIndex] = useState(0)
   const imageRefs = useRef<(HTMLDivElement | null)[]>([])
+
+  const markLoaded = useCallback((src: string) => {
+    setLoadedImages((prev) => {
+      if (prev.has(src)) return prev
+      const next = new Set(prev)
+      next.add(src)
+      return next
+    })
+  }, [])
 
   const activeProject = projects.find((p) => p.id === activeProjectId) ?? null
 
@@ -149,13 +159,18 @@ export function Projects() {
                 setActiveImageIndex(0)
               }}
             >
-              <div ref={(el) => (imageRefs.current[index] = el)} className="relative overflow-hidden mb-6 bg-secondary">
+              <div ref={(el) => (imageRefs.current[index] = el)} className="relative overflow-hidden mb-6 bg-secondary min-h-[240px]">
+                {!loadedImages.has(project.images[0]) && (
+                  <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-secondary via-muted to-secondary" />
+                )}
                 <img
                   src={project.images[0] || "/placeholder.svg"}
                   alt={project.title}
-                  className={`w-full h-auto object-contain transition-transform duration-700 ${
+                  loading="lazy"
+                  onLoad={() => markLoaded(project.images[0])}
+                  className={`w-full h-auto object-contain transition-all duration-700 ${
                     hoveredId === project.id ? "scale-[1.02]" : "scale-100"
-                  }`}
+                  } ${loadedImages.has(project.images[0]) ? "opacity-100" : "opacity-0"}`}
                 />
                 {project.images.length > 1 && (
                   <div className="absolute top-4 right-4 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-sm text-white text-xs">
@@ -212,10 +227,19 @@ export function Projects() {
             className="flex-1 relative flex items-center justify-center px-4 md:px-20"
             onClick={(e) => e.stopPropagation()}
           >
+            {!loadedImages.has(activeProject.images[activeImageIndex]) && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-10 h-10 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              </div>
+            )}
             <img
+              key={activeProject.images[activeImageIndex]}
               src={activeProject.images[activeImageIndex]}
               alt={`${activeProject.title} — фото ${activeImageIndex + 1}`}
-              className="max-h-full max-w-full object-contain"
+              onLoad={() => markLoaded(activeProject.images[activeImageIndex])}
+              className={`max-h-full max-w-full object-contain transition-opacity duration-500 ${
+                loadedImages.has(activeProject.images[activeImageIndex]) ? "opacity-100" : "opacity-0"
+              }`}
             />
 
             {activeProject.images.length > 1 && (
